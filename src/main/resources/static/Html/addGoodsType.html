@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商品信息</title>
+
+    <link rel="stylesheet" href="../css/select.css" type="text/css"></link>
+    <link rel="stylesheet" href="../css/style.css" type="text/css"></link>
+    <script type="text/javascript" src="../js/jquery-1.8.3.min.js"></script>
+</head>
+<body>
+<div class="formbody">
+    <div class="formtitle"><span>添加商品类型名称</span></div>
+    <div id="usual1" class="usual">
+        <div id="tab1" class="tabson">
+            <ul class="forminfo">
+                <li>
+                    <label>商品种类ID<b>*</b></label>
+                    <div class="vocation">
+                        <input type="text" name="goodsTypeId" id="goodsTypeId"  class="dfinput" placeholder="输入商品种类ID"  style="width:344px;"/>
+                        <br/>
+                        <br/>
+                        <br/>
+                    </div>
+                </li>
+                <li>
+                    <label>商品种类名称<b>*</b></label>
+                    <div class="vocation">
+                        <input type="text" name="goodsTypeName" id="goodsTypeName"  class="dfinput" placeholder="输入商品种类名称"  style="width:344px;"/>
+                        <br/>
+                        <br/>
+                        <br/>
+                    </div>
+                </li>
+
+
+                <li>
+                    <label>&nbsp;</label>
+                    <input name="" type="button" class="btn" value="添加" onclick="add()"/>
+                </li>
+
+            </ul>
+            <script type="text/javascript">
+                function add() {
+                    alert("进入add");
+                    var goodsTypeId= $("#goodsTypeId").val();
+                    var goodsTypeName = $("#goodsTypeName").val();
+                    alert(goodsTypeId+goodsTypeName);
+                    $.ajax({
+                        url: "../../insertGoodsType",
+                        type: "POST",
+                        data: {
+                            goodsTypeId:goodsTypeId,
+                            goodsTypeName: goodsTypeName
+                        },
+                        success: function (data, status) {
+                            if (status == "success") {
+                                alert(111);
+                                console.log('请求成功');
+                                console.log(data);
+                                if (data.state == 0) {
+                                    window.location = "SelectGoodstype.html";
+                                } else {
+                                    alert("添加失败")
+                                }
+
+                            }
+                        }
+                    });
+                }
+            </script>
+        </div>
+    </div>
+</div>
+</body>
+</html>

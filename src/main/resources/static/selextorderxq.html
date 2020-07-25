@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<title>订单详情</title>
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+</head>
+
+<script>
+
+   var url=window.location.search;//截取&
+   var strs=url.split("=");
+   var url1="../../getOrderDetail?orderNum="+strs[1];
+   $(function () {
+       $.ajax({
+           url:url1,
+           success:function (data) {
+               console.log(data);
+               //console.log(data.data[0].orderNum);
+               var orderNum=data.data[0].orderNum;
+               alert(orderNum);
+              var goodsId=data.data[0].goodsId;
+              var goodsCount=data.data[0].goodsCount;
+
+            var str="";
+
+    str+="<tr><td>"+orderNum+"</td>"+"<td>"+goodsId+"</td>>"+"<td>"+goodsCount+"</td>"+"</tr>>"
+               $("#ly").html(str);
+           }
+
+
+
+       })
+   });
+</script>
+<body>
+<div class="rightinfo">
+    <div class="tools">
+        <div id="toolbar" class="btn-group">
+
+        </div>
+    </div>
+</div>
+<form>
+    <table class="tablelist">
+        <thead>
+        <tr>
+            <td>订单编号</td>
+            <td>商品编号</td>
+            <td>商品数量</td>
+        </tr>
+        </thead>
+        <tbody id="ly">
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+
+        </tbody>
+    </table>
+</form>
+</body>
+
+</html>

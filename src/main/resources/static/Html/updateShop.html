@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商品信息</title>
+    <link rel="stylesheet" href="../../css/select.css" type="text/css"></link>
+    <link rel="stylesheet" href="../../css/style.css" type="text/css"></link>
+    <script type="text/javascript" src="../../js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript">
+        //下拉列表
+        $(function () {
+            $.ajax({
+                url: '../getAllTypeName',
+                type: "get",
+                data : {},
+                async : false,
+                success:function(data){
+                    var option;
+                    var headOption = "";
+                    for (var i = 0; i < data.data.length; i++) {
+                        headOption = headOption + "<option value='"+data.data[i].goodsTypeId+"'>"+data.data[i].goodsTypeName+"</option>";
+                    }
+
+                    option = '<select  class="dfinput"  name="goodsTypeName"  id="goodsTypeName" style="opacity:1; width:200px; height:35px;">'+
+                        headOption + '</select>' ;
+                    $("#p1").html(option);
+                }
+            })
+
+
+        })
+    </script>
+</head>
+<body>
+<div class="formbody">
+    <div class="formtitle"><span>修改商品信息</span></div>
+    <div id="usual1" class="usual">
+        <div id="tab1" class="tabson">
+            <ul class="forminfo">
+                <li>
+                    <label>商品的编号<b>*</b></label>
+                    <div class="vocation">
+                        <input type="text" readonly="readonly" name="goodsNum" id="goodsNum" class="dfinput" placeholder="请填写商品编号,如：XM123456"  style="width:344px;" />
+                    </div>
+                    <span id="goodsNumSpan"></span>
+                    <br/>
+                </li>
+
+                <li>
+                    <label>商品的名称<b>*</b></label>
+                    <div class="vocation">
+                        <input type="text" name="goodsName" id="goodsName"   class="dfinput" placeholder="输入修改的商品名称"  style="width:344px;"/>
+                    </div>
+                    <span id="goodsNameSpan">&nbsp;</span>
+                </li>
+
+                <li>
+                    <label>商品种类名称<b>*</b></label>
+                    <div class="vocation">
+                        <p id="p1"> </p>
+                    </div>
+                    <br/>
+                </li>
+
+                <li>
+                    <label>商品信息介绍<b>*</b></label>
+                    <div class="vocation">
+                        <input type="text" name="goodsDescript" id="goodsDescript"   class="dfinput" placeholder="输入修改的商品信息介绍"  style="width:344px;"/>
+                    </div>
+                    <span id="goodsDescriptSpan">&nbsp;</span>
+                </li>
+
+                <li>
+                    <label>商品的价格<b>*</b></label>
+                    <div class="vocation">
+                        <input type="text" name="goodsPrice" id="goodsPrice"  class="dfinput" placeholder="输入修改的商品价格"  style="width:344px;" />
+                    </div>
+                    <span id="goodsPriceSpan">&nbsp;</span>
+                </li>
+
+                <li>
+                    <label >商品状态<b>*</b></label>
+                    <div class="vocation">
+                        <select style="opacity:1; width:200px; height:35px;"  class="dfinput" name="goodsStatus" id="goodsStatus"  >
+                            <option value="" >请选择</option>
+                            <option value="0">正常销售</option>
+                            <option value="1">下架</option>
+                            <option value="2">预约</option>
+                        </select>
+                    </div>
+                    <br/>
+                </li>
+
+                <li>
+                    <label>商品库存<b>*</b></label>
+                    <div class="vocation">
+                        <input type="text" name="goodsInventory" id="goodsInventory"   class="dfinput" placeholder="输入修改的商品库存数量"  style="width:344px;"/>
+                    </div>
+                    <span id="goodsInventorySpan">&nbsp;</span>
+                </li>
+
+                <li>
+                    <label>商品图片<b>*</b></label>
+                    <div class="vocation">
+                        <input type="text" name="goodsPic" id="goodsPic"   class="dfinput" placeholder="输入修改后的商品图片，如abc.jpg"  style="width:344px;"/>
+                    </div>
+                    <span id="goodsPicSpan">&nbsp;</span>
+                </li>
+
+                <li>
+                    <label>商品添加人<b>*</b></label>
+                    <div class="vocation">
+                        <input type="text" name="goodsManager" id="goodsManager"  class="dfinput" placeholder="输入修改后的商品添加人"  style="width:344px;" />
+                    </div>
+                    <span id="goodsManagerSpan">&nbsp;</span>
+                </li>
+
+                <li>
+                    <label>&nbsp;</label>
+                    <input name="button" type="button" onclick="upshop()" class="btn" value="修改"/>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</div>
+<script>
+    window.onload = function () {
+        document.getElementById('goodsNum').value = localStorage.getItem('goodsNum');
+    }
+    function upshop() {
+        alert("进入update");
+        var goodsNum = $("#goodsNum").val();
+        var goodsName = $("#goodsName").val();
+        var goodsTypeId = $("#p1 option:checked").val();
+        var goodsDescript = $("#goodsDescript").val();
+        var goodsPrice = $("#goodsPrice").val();
+        var goodsInventory = $("#goodsInventory").val();
+        var goodsStatus = $("#goodsStatus option:checked").val();
+        var goodsPic = $("#goodsPic").val();
+        var goodsManager = $("#goodsManager").val();
+        var status = $("#status option:checked").val();
+        alert(goodsNum + goodsName + goodsTypeId + goodsDescript + goodsPrice+goodsInventory+goodsStatus+goodsPic+goodsManager);
+        $.ajax({
+            url: "../../updateGoods",
+            type: "POST",
+            data: {
+                goodsNum: goodsNum,
+                goodsName: goodsName,
+                goodsTypeId: goodsTypeId,
+                goodsDescript: goodsDescript,
+                goodsPrice: goodsPrice,
+                goodsInventory: goodsInventory,
+                goodsStatus: goodsStatus,
+                goodsPic: goodsPic,
+                goodsManager: goodsManager
+            },
+            success: function (data, status) {
+                if (status == "success") {
+                    console.log('请求成功');
+                    console.log(data);
+                    if (data.state == 0) {
+                        window.location = "SelectShop.html";
+                    } else {
+                        alert("修改失败")
+                    }
+
+                }
+            }
+        })
+    }
+</script>
+</body>
+</html>

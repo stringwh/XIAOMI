@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+<title>5款实用的jQuery验证码插件</title>
+
+<link rel="stylesheet" type="text/css" href="css/verify.css">
+
+</head>
+<body>
+<div id="mpanel1">
+</div>
+
+
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/verify.js" ></script>
+<script type="text/javascript">
+
+
+	$('#mpanel1').slideVerify({
+		type : 1,		//类型
+		vOffset : 4,	//误差量，根据需求自行调整
+		barSize : {
+			width : '80%',
+			height : '40px',
+		},
+		ready : function() {
+		},
+		success : function() {
+			alert('验证成功，添加你自己的代码！');
+			//......后续操作
+		},
+		error : function() {
+//		        	alert('验证失败！');
+		}
+
+	});
+
+</script>
+
+</body>
+</html>

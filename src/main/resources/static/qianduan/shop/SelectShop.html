@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="order by dede58.com"/>
+    <title>小米商品列表</title>
+    <link rel="stylesheet" type="text/css" href="../../css1/style.css">
+</head>
+<body>
+<!-- start header -->
+<header>
+    <div class="top center">
+        <div class="left fl">
+            <ul>
+                <li><a href="http://www.mi.com/" target="_blank">小米商城</a></li>
+                <div class="clear"></div>
+            </ul>
+        </div>
+        <div class="right fr">
+            <div class="gouwuche fr"><a href="">购物车</a></div>
+            <div class="fr">
+                <ul>
+                    <li><a href="../login.html" target="_blank">登录</a></li>
+                    <li>|</li>
+                    <li><a href="../register.html" target="_blank" >注册</a></li>
+                    <li>|</li>
+                </ul>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</header>
+<div class="banner_x center">
+    <a href="./index.html" target="_blank"><div class="logo fl"></div></a>
+    <a href=""><div class="ad_top fl"></div></a>
+    <div class="nav fl">
+        <ul>
+            <li><a href="">手机</a></li>
+            <li><a href="">电脑</a></li>
+            <li><a href="">配件</a></li>
+            <li><a href="">移动电源</a></li>
+            <li><a href="">平衡车</a></li>
+            <li><a href="">电视机</a></li>
+        </ul>
+    </div>
+    <div class="search fr">
+        <form action="" method="post">
+            <div class="text fl">
+                <input type="text" class="shuru"  placeholder="&nbsp;&nbsp;&nbsp;小米9&nbsp;小米MIX 2S现货">
+            </div>
+            <div class="submit fl">
+                <input type="submit" class="sousuo" value="搜索"/>
+            </div>
+            <div class="clear"></div>
+        </form>
+        <div class="clear"></div>
+    </div>
+</div>
+<table id="page"></table>
+   <script>
+    $(function () {
+
+        initTable('../../getAllGoods',1,3);//调用函数，初始化表格
+    });
+
+    function initTable(url,pageNumber,pageSize) {
+        $('#page').bootstrapTable('destroy'); //先销毁表格
+        $('#page').bootstrapTable({
+            url: url,
+            method: 'get',
+            toolbar: "#toolbar",
+            striped: true, // 是否显示行间隔色 //search : "true",
+            sidePagination: "server",
+            pageNumber: pageNumber, //初始化加载第一页，默认第一页
+            pageList: [3,5, 10, 20, 30],//可供选择的每页的行数
+            pageSize: pageSize,//初始默认每页行数
+            pagination: true,
+            showRefresh: false,//刷新
+            showPaginationSwitch: false,//是否隐藏分页条
+            showToggle: false, //是否显示详细视图和列表视图的切换按钮
+            // clickToSelect: true,点击选中
+            editable: true,
+            contentType: "application/x-www-form-urlencoded",
+            paginationPreText: "上一页",
+            paginationNextText: "下一页",
+            queryParamsType: "limit",//设置为 ‘limit’ 则会发送符合 RESTFul 格式的参数.
+            sortable: true, // 是否启用排序
+            // queryParams: queryParams, //queryParams为参数设置的函数
+            queryParams: function (params) {
+                return {//这里的params是table提供的
+                    pageNum: (params.offset / params.limit) + 1, //当前页面,默认是上面设置的1(pageNumber)
+                    pageSize: params.limit, //每一页的数据行数，默认是上面设置的5(pageSize)
+                    /* username: $("#searchString_id").val()*/ //这个就是搜索框中的内容，可以自动传到后台，搜索实现在xml中体现
+                };
+            },
+            columns: [
+                {
+                    checkbox: true
+                }, {
+                    field: 'goodsNum',
+                    title: '商品的编号'
+                },
+                {
+                    field: 'goodsName',
+                    title: '商品的名称'
+                },
+                {
+                    field: 'goodsTypeID',
+                    title: '商品种类的ID'
+                },
+                {
+                    field: 'goodsDescript',
+                    title: '关于商品的一些介绍信息'
+                },
+                {
+                    field: 'goodsPrice',
+                    title: '商品的价格'
+                },
+                {
+                    field: 'goodsInventory',
+                    title: '商品库存'
+                },
+                {
+                    field: 'goodsStatus',
+                    title: '商品状态'
+                },
+                {
+                    field: 'goodsPic',
+                    title: '商品图片'
+                },
+                {
+                    field: 'goodsManager',
+                    title: '商品添加人'
+                },
+                {
+                    field: '',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,//给按钮注册事件
+                    formatter: addFunctionAlty//表格中增加按钮
+                }],
+            onLoadSuccess: function () {  //加载成功时执行
+                console.info("加载数据成功");
+            },
+            onLoadError: function () {  //加载失败时执行
+                console.info("加载数据失败");
+            }
+        });
+    };
+
+    function addFunctionAlty(value, row, index) { //要进行的操作 操作函数
+        // 修改按钮、删除按钮
+        return [
+            '<button type="button" id="btn_edit" class="btn btn-info" data-toggle="modal" data-target="#ModalInfo" >修改</button>',
+            '<button id="btn_delete" class="btn btn-danger" onclick="shanchu()">删除</button>'
+        ].join('');
+    }
+
+    window.operateEvents = {
+        'click #btn_delete': function (e, value, row, index) {
+            //  alert(111);
+            /*var arrays = new Array();
+            arrays.push(row.id);
+            console.log(arrays[0]);*/
+            val=row.roomNumber;
+            $.ajax({
+                url: "../../room/delRoom",
+                type: "POST",
+                traditional: true,
+                data: {
+                    'roomNumber':val
+                },
+
+                success: function (data) {
+                    alert(222);
+                    console.log("删除成功");
+                    console.log(num);
+                    initTable(num,size);
+                    console.log(data);
+                }
+            })
+
+        },
+        'click #btn_edit': function (e, value, row, index) {
+            //console.log(row.roomNumber + row.account + row.realName + row.password + row.sex + row.birthDate + row.idCard + row.phone + row.address);
+            //中文传输:可以在页面a用encodeURI 编码url  在b页面用decodeURI解码url
+            //可用encodeURI() 函数可把字符串作为 URI 进行编码。注：①encodeURI()需转2次，encodeURI(encodeURI(url))
+            localStorage.setItem('roomNumber',row.roomNumber);
+            window.location = "updateRoom.html";
+        }
+    }
+    //根据房间号删除多项房间
+    function del() {
+        confirm("确认删除？");
+        var rows = $("#page").bootstrapTable('getSelections');
+        console.log(rows.length);
+        var rn = [];
+        //遍历被选中的行
+        for (var i = 0; i < rows.length; i++) {
+
+            //将其tid组成一个数组。
+            //1.0
+            rn += rows[i].roomNumber + ",";
+            //    2.0 id+=rows[i]['roomNumber']+','
+            console.log('delAll的rn是' + rn);
+        }
+        $.ajax({
+            url: "../../room/delAll",
+            type: "POST",
+            traditional: true,
+            data: {
+                rn: rn
+            },
+
+            success: function (data) {
+                if (data.state == 0) {
+                    console.log("删除成功");
+                    initTable('../../room/getRoom', 1, 3);
+                } else {
+                    alert("删除失败")
+                }
+            }
+        })
+    }
+  </script>
+
+
+</body>
+</html>

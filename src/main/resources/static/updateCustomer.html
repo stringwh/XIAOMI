@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>员工信息</title>
+    <link rel="stylesheet" href="css/select.css" type="text/css"></link>
+    <link rel="stylesheet" href="css/style.css" type="text/css"></link>
+
+    <script type="text/javascript" src="js/jquery-2.1.4.js"></script>
+    <script>
+window.onload=function () {
+    document.getElementById("customerId").value=localStorage.getItem("customerId");
+}
+    </script>
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <script src="layui/laydate/laydate.js"></script>
+</head>
+<body>
+<div class="place"> <span>位置：</span>
+    <ul class="placeul">
+        <li><a href="main.html">首页</a></li>
+        <li><a href="#">客户信息管理</a></li>
+        <li><a href="#">修改客户</a></li>
+    </ul>
+</div>
+<div class="formbody">
+    <div class="formtitle"><span>修改客户</span></div>
+    <div id="usual1" class="usual">
+        <div id="tab1" class="tabson">
+
+
+            <ul class="forminfo">
+                <li>
+                    <label>客户编号<b>*</b></label>
+                    <div class="vocation">
+                        <input type="text" name="customerId" id="customerId"   class="dfinput"  style="width:344px;"/>
+                    </div>
+                    <span id="goodsNameSpan0">&nbsp;</span>
+                </li>
+
+                <li>
+                    <label>客户姓名<b>*</b></label>
+                    <div class="vocation">
+                        <input type="text" name="customerName" id="customerName" class="dfinput" placeholder="请填写姓名"  style="width:344px;" />
+                    </div>
+                    <span id="goodsNumSpan"></span>
+                    <br/>
+                </li>
+
+                <li>
+                    <label>客户密码<b>*</b></label>
+                    <div class="vocation">
+                        <input type="text" name="customerPWD" id="customerPWD"   class="dfinput" placeholder="输入密码"  style="width:344px;"/>
+                    </div>
+                    <span id="goodsNameSpan2">&nbsp;</span>
+                </li>
+                <li>
+                    <label>客户生日<b>*</b></label>
+                    <div class="vocation">
+                                <input type="text" class="layui-input" id="customerBirthday" placeholder="yyyy-MM-dd HH:mm:ss">
+                    </div>
+                    <span id="goodsNameSpan4">&nbsp;</span>
+                </li>
+                <li>
+                    <label>联系方式<b>*</b></label>
+                    <div class="vocation">
+                       <input type="text" name="customerPhone" id="customerPhone"   class="dfinput" placeholder="输入联系方式"  style="width:344px;"/>
+                    </div>
+                    <span id="goodsNameSpan3">&nbsp;</span>
+                </li>
+
+                <li>
+                    <label>&nbsp;</label>
+                    <input name="button"  style='background-color:red' type="button"onclick="up()" class="btn" value="修改"/>
+                </li>
+
+            </ul>
+
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+function up() {
+    alert("1111");
+    var customerId = $("#customerId").val();
+    var customerName = $("#customerName").val();
+    var customerPWD = $("#customerPWD").val();
+    var customerBirthday = $("#customerBirthday").val();
+    var customerPhone = $("#customerPhone").val();
+
+    $.ajax({
+        url: "/updateCustomer?customerId=" + customerId + "&customerName=" + customerName + "&customerPWD=" + customerPWD + "&customerBirthday=" + customerBirthday + "&customerPhone=" + customerPhone,
+        success: function (data, status) {
+            if (status == "success") {
+                console.log('请求成功');
+                console.log(data);
+                if (data.state == 0) {
+                    alert("修改客户成功!!!");
+
+                    window.location = "SelectCustomer.html";
+                } else {
+                    alert("修改失败")
+                }
+
+            }
+        }
+    })
+} //日期时间选择器
+laydate.render({
+    elem: '#customerBirthday'
+    ,type: 'datetime'
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="author" content="order by dede58.com"/>
+	<title>我的购物车-小米商城</title>
+	<link rel="stylesheet" type="text/css" href="../css1/style.css">
+	<script src="../js/jquery-2.1.4.js"></script>
+	<script type="text/javascript">
+		var customerId = 0;
+		var	searchText=localStorage.getItem("customerName");
+		$(function () {
+
+			$.getJSON("../../getCustomerByName",{customerName:searchText},function (data) {
+				customerId=data.data.customerId;
+				$.ajax({
+					type: "get",
+					url: "../../getCart",
+					data: {
+						customerId: data.data.customerId,
+					},
+					dataType: 'JSON',
+					success: function (data, status) {
+						if (typeof (data) != "object") {
+							data = eval('(' + data + ')');
+						}
+						if (data.state) {
+							alert(data.data);
+						} else {
+							var cart = "";
+							var price = 0;
+							$("#totalGoods").text(data.data.length);
+							for (var i = 0; i < data.data.length; i++) {
+								price = price + data.data[i].goods.goodsPrice * data.data[i].goodsCount;
+								cart = cart + "<div class=\"content2 center\">\n" +
+										"\t\t\t\t\t\t<div class=\"sub_content fl \">\n" +
+										"\t\t\t\t\t\t\t<input type=\"checkbox\" value=\"quanxuan\" class=\"quanxuan\" id='" + data.data[i].goods.goodsId + "' name='item'/>\n" +
+										"\t\t\t\t\t\t</div>\n" +
+										"\t\t\t\t\t\t<div class=\"sub_content fl\"><img height=\"80\" width=\"80\" src=\"../image/" + data.data[i].goods.goodsPic + "\"></div>\n" +
+										"\t\t\t\t\t\t<div class=\"sub_content fl ft20\">" + data.data[i].goods.goodsName + "</div>\n" +
+										"\t\t\t\t\t\t<div id='acount" + i + "' class=\"sub_content fl \">" + data.data[i].goods.goodsPrice + "</div>\n" +
+										"\t\t\t\t\t\t<div class=\"sub_content fl\">\n" +
+										"\t\t\t\t\t\t\t<input name='count" + i + "' id='a" + data.data[i].goods.goodsId + "' onchange='getval(this)' class=\"shuliang\" type=\"number\" value=\"" + data.data[i].goodsCount + "\" step=\"1\" min=\"1\" >\n" +
+										"\t\t\t\t\t\t</div>\n" +
+										"\t\t\t\t\t\t<div  id='bcount" + i + "' class=\"sub_content fl\">" + data.data[i].goods.goodsPrice * data.data[i].goodsCount + "</div>\n" +
+										"\t\t\t\t\t\t<div name='" + data.data[i].goods.goodsId + "' onclick='delCart(this)' class=\"sub_content fl\"><a href=\"\">×</a></div>\n" +
+										"\t\t\t\t\t\t<div class=\"clear\"></div>\n" +
+										"\t\t\t\t\t</div>";
+								localStorage.setItem(data.data[i].goods.goodsId, data.data[i].goodsCount);
+								localStorage.setItem("a"+data.data[i].goods.goodsId, data.data[i].cartId);
+							}
+							$("#showCart").html(cart);
+							$("#totalMoney").html(price);
+						}
+					},
+					error: function () {
+						alert("请求数据失败.");
+					}
+				});
+			})
+			$("#userName").text(searchText);
+
+		});
+
+		function getval(a) {
+			price = 0;
+			var count = "b" + a.name;
+			var money = "a" + a.name;
+			var goodsId = a.id;
+			var goodsCount = a.value;
+			document.getElementById(count).innerText = document.getElementById(money).innerText * a.value;
+			for (var i = 0; i < parseInt(document.getElementById("totalGoods").innerText); i++) {
+				var forcount = "bcount" + i;
+				price = price + parseInt(document.getElementById(forcount).innerText);
+			}
+			localStorage.setItem(goodsId, goodsCount);
+			$.post("../../updateCount", {
+				goodsId: goodsId,
+				goodsCount: goodsCount,
+				customerId: customerId
+			}, function (data) {
+				alert(data.data);
+			})
+			document.getElementById("totalMoney").innerText = price;
+		}
+
+		function delCart(e) {
+			var goodsId = e.getAttribute("name");
+			$.getJSON("../../delCart", {cartId:localStorage.getItem("a"+goodsId)}, function (data) {
+				alert(data.data);
+			})
+		}
+
+		function checkaaa(e) {
+			var checks = document.getElementsByName("item");
+			if (e.checked) {
+				for (var i = 0; i < checks.length; i++) {
+					checks[i].checked = true;
+				}
+			} else {
+				for (var i = 0; i < checks.length; i++) {
+					checks[i].checked = false;
+				}
+			}
+		}
+
+		function submitaa() {
+			alert($("#totalMoney").text());
+			$.post("../../addOrder1", {
+				customerId:customerId,
+				totalMoney:$("#totalMoney").text()
+			}, function (data) {
+				$('input:checkbox[name=item]:checked').each(function () {
+					var goodsId=$(this).attr("id");
+
+					$.post("../../addOrderDetail", {
+						orderNum:data.data,
+						goodsId: goodsId,
+						goodsCount:localStorage.getItem(goodsId),
+					}, function (data) {
+					});
+					$.getJSON("../../delCart",{cartId:localStorage.getItem("a"+goodsId)},function (data) {})
+			});
+				alert("购买成功，订单号为："+data.data);
+				location.href="index.html";
+			});
+
+
+		}
+
+	</script>
+
+</head>
+<body>
+<!-- start header -->
+<!--end header -->
+
+<!-- start banner_x -->
+<div class="banner_x center">
+	<a href="index.html" target="_blank">
+		<div class="logo fl"></div>
+	</a>
+
+	<div class="wdgwc fl ml40">我的购物车</div>
+	<div class="wxts fl ml20">温馨提示：产品是否购买成功，以最终下单为准哦，请尽快结算</div>
+	<div class="dlzc fr">
+		<ul>
+			<li><a href="" target="_blank">欢迎您</a></li>
+			<li>|</li>
+			<li><a href="" target="_blank" id="userName">XXX</a></li>
+		</ul>
+
+	</div>
+	<div class="clear"></div>
+</div>
+<div class="xiantiao"></div>
+<div class="gwcxqbj">
+	<div class="gwcxd center">
+		<div class="top2 center">
+			<div class="sub_top fl">
+				<input type="checkbox" value="quanxuan" class="quanxuan" id="checkAll" onclick="checkaaa(this)"/>全选
+			</div>
+			<div class="sub_top fl" id="abc" name="12313123131231">商品名称</div>
+			<div class="sub_top fl">单价</div>
+			<div class="sub_top fl">数量</div>
+			<div class="sub_top fl">小计</div>
+			<div class="sub_top fr">操作</div>
+			<div class="clear"></div>
+		</div>
+
+
+		<div id="showCart">
+			<!--					<div class="content2 center">-->
+			<!--						<div class="sub_content fl ">-->
+			<!--							<input type="checkbox" value="quanxuan" class="quanxuan" />-->
+			<!--						</div>-->
+			<!--						<div class="sub_content fl"><img src="../image/gwc_xiaomi6.jpg"></div>-->
+			<!--						<div class="sub_content fl ft20">小米6全网通6GB内存+64GB 亮黑色</div>-->
+			<!--						<div class="sub_content fl ">2499元</div>-->
+			<!--						<div class="sub_content fl">-->
+			<!--							<input class="shuliang" type="number" value="1" step="1" min="1" >-->
+			<!--						</div>-->
+			<!--						<div class="sub_content fl">2499元</div>-->
+			<!--						<div class="sub_content fl"><a href="">×</a></div>-->
+			<!--						<div class="clear"></div>-->
+			<!--					</div>-->
+
+		</div>
+
+
+	</div>
+	<div class="jiesuandan mt20 center">
+		<div class="tishi fl ml20">
+			<ul>
+				<li><a href="liebiao.html">继续购物</a></li>
+				<li>|</li>
+				<li>共<span id="totalGoods"></span>件商品，已选择<span>1</span>件</li>
+				<div class="clear"></div>
+			</ul>
+		</div>
+		<div class="jiesuan fr">
+			<div class="jiesuanjiage fl">合计（不含运费）：<span id="totalMoney"></span>元</div>
+			<div class="jsanniu fr"><input class="jsan" type="submit" name="jiesuan" value="去结算" onclick="submitaa()"/></div>
+			<div class="clear"></div>
+		</div>
+		<div class="clear"></div>
+	</div>
+</div>
+</body>
+</html>

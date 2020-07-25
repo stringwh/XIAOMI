@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>员工信息</title>
+    <link rel="stylesheet" href="../css/select.css" type="text/css"></link>
+    <link rel="stylesheet" href="../css/style.css" type="text/css"></link>
+    <script type="text/javascript" src="../js/jquery-2.1.4.js"></script>
+    <!--<script type="text/javascript" >
+        $.ajaxSetup({
+            async:false
+        });
+        //返回值时，先定义全局变量，由ajax改变值，返回该全局变量
+        //下拉列表
+        $(function () {
+            $.ajax({
+                url: '../../getAllGoodsType',
+                type: "post",
+                data : {},
+                async : false,
+                success:function(data){
+                    //alert(data.data);
+                    var option;
+                    var headOption = "";
+                    for (var i = 0; i < data.data.length; i++) {
+                        headOption = headOption + "<option value='"+data.data[i].id+"'>"+data.data[i].type+"</option>";
+                    }
+                    option = '<select  class="dfinput"  name="goodsTypeName"  id="select" style="opacity:1; width:200px; height:35px;">'+
+                        headOption + '</select>' ;
+
+                    $("#p1").html(option);
+                }
+            })
+
+
+        })
+
+    </script>-->
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            window.localStorage.getItem("managerId");
+            val=window.localStorage.getItem("managerId");
+           /* alert(val);*/
+            $.ajax({
+                url:"../../getManager",    //请求的url地址
+                dataType:"json",   //返回格式为json
+                async:true,//请求是否异步，默认为异步，这也是ajax重要特性
+                data:{"managerId":val},    //参数值
+                type:"POST",   //请求方式
+                beforeSend:function(){
+                    //请求前的处理
+                },
+                success:function(data){
+                    //请求成功时处理
+
+
+
+                    $("[name='managerNum']").val(data.data.managerNum);
+                    $("[name='managerName']").val(data.data.managerName);
+                    $("[name='managerPWD']").val(data.data.managerPWD);
+
+
+
+                }
+            })
+        })
+
+
+        function update() {
+            /*alert("进入add");*/
+            var managerNum = $("#managerNum").val();
+            var managerName = $("#managerName").val();
+            var managerPWD = $("#managerPWD").val();
+            var managerStatus = $("#managerStatus").val();
+
+
+
+
+            /*alert(customerRegDate);*/
+            $.ajax({
+                url: "../../updateManager",
+                type: "POST",
+                data: {
+                    managerId:val,
+                    managerNum:managerNum,
+                    managerName:managerName,
+                    managerPWD:managerPWD,
+                    managerStatus:managerStatus
+                },
+                success: function (data, status) {
+                    if (status == "success") {
+                        console.log('请求成功');
+                        console.log(data);
+                        if (data.state == 0) {
+                            alert("修改员工成功!!!");
+
+                            window.location = "SelectManager.html";
+                        } else {
+                            alert("修改失败")
+                        }
+
+                    }
+                }
+            })
+        }
+        //下拉列表
+        $(function () {
+            $.ajax({
+                url: '../getAllTypeName',
+                type: "get",
+                data : {},
+                async : false,
+                success:function(data){
+                    var option;
+                    var headOption = "";
+                    for (var i = 0; i < data.data.length; i++) {
+                        headOption = headOption + "<option value='"+data.data[i].goodsTypeId+"'>"+data.data[i].goodsTypeName+"</option>";
+                    }
+
+                    option = '<select  class="dfinput"  name="goodsTypeName"  id="goodsTypeName" style="opacity:1; width:200px; height:35px;">'+
+                        headOption + '</select>' ;
+                    $("#p1").html(option);
+                }
+            })
+
+
+        })
+    </script>
+
+
+</head>
+<body>
+<div class="place"> <span>位置：</span>
+    <ul class="placeul">
+        <li><a href="main.html">首页</a></li>
+        <li><a href="#">员工信息管理</a></li>
+        <li><a href="#">修改员工信息</a></li>
+    </ul>
+</div>
+<div class="formbody">
+    <div class="formtitle"><span>添加员工</span></div>
+    <div id="usual1" class="usual">
+        <div id="tab1" class="tabson">
+
+
+            <ul class="forminfo">
+                <li>
+                    <label>员工编号<b>*</b></label>
+                    <div class="vocation">
+                        <input type="text" name="managerNum" id="managerNum"  value=""  class="dfinput"  style="width:344px;"/>
+                    </div>
+                    <span id="goodsNameSpan">&nbsp;</span>
+                </li>
+
+                <li>
+                    <label>员工姓名<b>*</b></label>
+                    <div class="vocation">
+                        <input type="text" name="managerName" id="managerName" class="dfinput"  style="width:344px;" />
+                    </div>
+                    <span id="goodsNumSpan"></span>
+                    <br/>
+                </li>
+
+                <li>
+                    <label>员工密码<b>*</b></label>
+                    <div class="vocation">
+                        <input type="text" name="managerPWD" id="managerPWD"   class="dfinput"   style="width:344px;"/>
+                    </div>
+                    <span id="goodsNameSpan">&nbsp;</span>
+                </li>
+
+
+
+
+                <li>
+                    <label>员工状态<b>*</b></label>
+                    <div class="vocation">
+                        <select style="opacity:1; width:200px; height:35px;"  class="dfinput" name="managerStatus" id="managerStatus"  >
+                            <option value="0">在职</option>
+                            <option value="1">离职</option>
+                        </select>
+                    </div>
+                    <span id="goodsNameSpan">&nbsp;</span>
+                </li>
+
+
+
+
+
+
+
+
+                <li>
+                    <label>&nbsp;</label>
+                    <input name="button"  style='background-color:red' type="button" onclick="update()" class="btn" value="修改"/>
+                </li>
+                <!--  <li>
+                      <label >商品状态<b>*</b></label>
+                      <div class="vocation">
+                          <select style="opacity:1; width:200px; height:35px;"  class="dfinput" name="goodsStatus" id="goodsStatus"  >
+                              <option value="" >请选择</option>
+                              <option value="0">正常销售</option>
+                              <option value="1">下架</option>
+                              <option value="2">预约</option>
+                          </select>
+                      </div>
+                      <br/>
+                  </li>
+  -->
+                <!-- <li>
+                     <label>商品库存<b>*</b></label>
+                     <div class="vocation">
+                         <input type="text" name="goodsInventory" id="goodsInventory"   class="dfinput" placeholder="输入商品库存数量"  style="width:344px;"/>
+                     </div>
+                     <span id="goodsInventorySpan">&nbsp;</span>
+                 </li>
+
+                 <li>
+                     <label>商品图片<b>*</b></label>
+                     <div class="vocation">
+                         <input type="text" name="goodsPic" id="goodsPic"   class="dfinput" placeholder="输入商品图片，如abc.jpg"  style="width:344px;"/>
+                     </div>
+                     <span id="goodsPicSpan">&nbsp;</span>
+                 </li>
+
+                 <li>
+                     <label>商品添加人<b>*</b></label>
+                     <div class="vocation">
+                         <input type="text" name="goodsManager" id="goodsManager"  class="dfinput" placeholder="输入商品添加人"  style="width:344px;" />
+                     </div>
+                     <span id="goodsManagerSpan">&nbsp;</span>
+                 </li>
+
+                 <li>
+                     <label>&nbsp;</label>
+                     <input name="button" type="button" onclick="add()" class="btn" value="添加"/>
+                 </li>
+ -->
+            </ul>
+
+            </form>
+
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

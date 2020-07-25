@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商品信息</title>
+    <link rel="stylesheet" href="../../css/select.css" type="text/css"></link>
+    <link rel="stylesheet" href="../../css/style.css" type="text/css"></link>
+
+    <script type="text/javascript" src="../../js/jquery-1.8.3.min.js"></script>
+    <script>
+        $(function () {
+            alert(11111);
+            $.ajax({
+                url: '../../getAllTypeName',
+                type: "post",
+                data : {},
+                async : false,
+                success : function(data) {
+                    var shoptype="";
+                    for(var i=0;i<data.data.length;i++){    //遍历data数组
+                        var ls = data[i].data;
+                        shoptype +="<option value='"+ls.goodsTypeId+"' selected>"+ls.goodsTypeName+"</option>";
+                    }
+                    option = '<select  name="goodsType" size="1" id="select" style="width:100px;">'+
+                        shoptype + '</select>' ;
+                    $("#ul").html(shoptype);
+                },
+            })
+        })
+    </script>
+</head>
+<body>
+<div class="formbody">
+    <div class="formtitle"><span>修改商品类型名称</span></div>
+    <div id="usual1" class="usual">
+        <div id="tab1" class="tabson">
+            <ul class="forminfo">
+
+                <li>
+                    <label>商品种类ID<b>*</b></label>
+                    <div class="vocation">
+                        <input  readonly="readonly" type="text" name="goodsTypeId" id="goodsTypeId"  class="dfinput" placeholder="请输入要修改的商品种类的ID"  style="width:344px;"/>
+                        <span id="priceSpan">&nbsp;</span>
+                    </div>
+                </li>
+
+                <li>
+                    <label>商品种类名称<b>*</b></label>
+                    <div class="vocation">
+                        <input  type="text" name="goodsTypeName" id="goodsTypeName"  class="dfinput" placeholder="请输入要修改的商品种类名称"  style="width:344px;"/>
+                        <span id="priceSpan">&nbsp;</span>
+                    </div>
+                </li>
+                <li id="ulul"> </li>
+
+                <br/>
+                <li>
+                    <label>&nbsp;</label>
+                    <input name="button" type="button" onclick="uproom()" class="btn" value="修改"/>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+    window.onload = function () {
+        document.getElementById('goodsTypeId').value = localStorage.getItem('goodsTypeId');
+    }
+    function uproom() {
+        var goodsTypeId = $("#goodsTypeId").val();
+        var goodsTypeName=$("#goodsTypeName").val();
+        alert(goodsTypeId+goodsTypeName);
+        $.ajax({
+            url: "../../upGoodsType",
+            type: "POST",
+            data: {
+                goodsTypeId: goodsTypeId,
+                goodsTypeName: goodsTypeName
+            },
+            success: function (data, status) {
+                if (status == "success") {
+                    console.log('请求成功');
+                    console.log(data);
+                    if (data.state == 0) {
+                        window.location = "SelectGoodstype.html";
+                    } else {
+                        alert("修改失败")
+                    }
+
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>
